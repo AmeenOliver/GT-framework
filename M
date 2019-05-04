@@ -1,0 +1,51 @@
+CPP_SRC=../../../Sources
+HDR_SRC=../../../Sources
+EXEC_DIR=Build
+GTES_CPP=$(EXEC_DIR)/GTestLib/gtest
+TEST_CPP=Tutos_SUT
+GTES_HDR=$(EXEC_DIR)/GTestLib
+TOOLS_DIR := ../../../Tools/lcov-master/bin
+GTEST_FRAME := ../../../Tools/googletest/scripts
+LCOV    := $(TOOLS_DIR)/lcov
+GENHTML := $(TOOLS_DIR)/genhtml
+GENDESC := $(TOOLS_DIR)/gendesc
+GENPNG  := $(TOOLS_DIR)/genpng
+GCOVR	:= C:/cygwin64/bin/gcovr
+CXX=g++
+APPS_NAME := Tutos
+CXXFLAGS= -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -lpthread
+
+all : clean run coverage
+
+coverage : test_coverage
+	@echo 'from the cygwin i talk hh'
+	@pwd
+	@perl $(GENHTML) --rc lcov_branch_coverage=1 --branch-coverage Build/$(APPS_NAME).info  --output-directory ../../SUT_Repport/output --title "$(APPS_NAME) example" --legend
+# -lgcov
+# -ftest-coverage -fprofile-arcs
+run : gtest.o cpps.o gtest_main.o tests.o
+	$(CXX)  -lgcov -lpthread -ftest-coverage -fprofile-arcs -o $(EXEC_DIR)/$(APPS_NAME) $(EXEC_DIR)/*.o 
+	@pwd
+	
+gtest.o: $(GTEST_FRAME)/fuse_gtest_files.py
+	@python $(GTEST_FRAME)/fuse_gtest_files.py $(EXEC_DIR)/GTestLib
+	$(CXX) $(CXXFLAGS) -I"$(GTES_HDR)" -c $(GTES_CPP)/*.cc -o $(EXEC_DIR)/$@ 
+
+cpps.o : $(CPP_SRC)/*.cpp
+	$(CXX) $(CXXFLAGS) -I"$(HDR_SRC)" -ftest-coverage -fprofile-arcs -c $(CPP_SRC)/*.cpp -o $(EXEC_DIR)/$@ 
+
+%.o : $(TEST_CPP)/%.cpp
+	$(CXX) $(CXXFLAGS) -I"$(HDR_SRC)" -I"$(GTES_HDR)" -c $< -o $(EXEC_DIR)/$@ 
+	
+clean :
+	rm $(EXEC_DIR)/*.o  $(EXEC_DIR)/*.d $(EXEC_DIR)/*.gcno $(EXEC_DIR)/*.gcda $(EXEC_DIR)/*.exe
+	
+	
+test_coverage:
+	@pwd
+	@perl $(LCOV) --zerocounters --directory Build
+	./Build/$(APPS_NAME)
+	@dir Build
+	@perl $(LCOV) --rc lcov_branch_coverage=1 --base-directory Build --capture --directory Build --output-file Build/$(APPS_NAME).info --test-name $(APPS_NAME)_test
+	@dir Build
+

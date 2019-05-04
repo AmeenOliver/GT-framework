@@ -1,0 +1,17 @@
+TN:exec_test
+SF:/Users/mac/Project/unitest/Sources/Sources/Fibonacci.cpp
+FN:13,_Z9fibonaccii
+FNDA:10444,_Z9fibonaccii
+FNF:1
+FNH:1
+BRDA:14,0,0,5224
+BRDA:14,0,1,5220
+BRF:2
+BRH:2
+DA:14,10444
+DA:15,5224
+DA:17,5220
+DA:19,10444
+LF:4
+LH:4
+end_of_record
