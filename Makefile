@@ -1,4 +1,4 @@
-CPP_SRC=../../../Sources
+CPP_SRC=Sources/Sources/
 HDR_SRC=Sources/Headers
 EXEC_DIR=Build
 GTES_CPP=GTestLibrary/gtest
@@ -22,6 +22,9 @@ all: run coverage
 run: Fibonacci.o gtest_main.o main.o gtest-all.o 
 	$(CXX) -lpthread -ftest-coverage -fprofile-arcs  -o $(EXEC_DIR)/$(APPS_NAME) $(DEPENDENCIES)
 	./$(EXEC_DIR)/exec --gtest_output="xml:hello.xml"
+
+Qa :
+	@cppcheck --enable=all --inconclusive --xml --xml-version=2 $(CPP_SRC) 2> cppcheck.xml
 Fibonacci.o : Sources/Sources/Fibonacci.cpp
 	$(CXX) $(CXXFLAGS) -I "$(HDR_SRC)" -ftest-coverage -fprofile-arcs -c $< -o $(EXEC_DIR)/$@ 
 
